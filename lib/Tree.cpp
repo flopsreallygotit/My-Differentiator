@@ -20,6 +20,7 @@ Tree_t* TreeCtor() {
     assert( new_tree && "Memory allocation error" );
 
     #ifdef _DEBUG
+    // TODO make separate function 
         new_tree->image_number = 0;
         new_tree->logging.log_path = strdup( "dump" );
 
@@ -41,7 +42,7 @@ Tree_t* TreeCtor() {
     return new_tree;
 }
 
-void TreeDtor( Tree_t **tree, void  ( *clean_function ) ( TreeData_t value, Tree_t* tree ) ) {
+void TreeDtor( Tree_t **tree, void  ( *clean_function ) ( TreeData_t value, Tree_t* tree ) ) { // TODO: Why you use ** here? You can use just * here
     my_assert( tree, "Null pointer on pointer on `tree`" );
     if ( *tree == NULL ) return;
 
@@ -138,6 +139,7 @@ static void NodeDumpRecursively( const Node_t* node, FILE* dot_stream ) {
         return;
     }
 
+    // TODO: Make separate func for this:
     #ifdef _DEBUG
         DOT_PRINT( "\tnode_%lX [shape=plaintext; style=filled; color=black; fillcolor=\"#%X\"; label=< \n",
                 ( uintptr_t ) node, fill_color );
@@ -207,7 +209,7 @@ static void NodeDumpRecursively( const Node_t* node, FILE* dot_stream ) {
         DOT_PRINT( "\t>]; \n" );
 
     // TODO: rework this for the differentiator
-    #else
+    #else // TODO: And for this:
         DOT_PRINT( "\tnode_%lX [shape=plaintext; label=<\n", ( uintptr_t ) node );
 
         DOT_PRINT( "\t<TABLE BORDER=\"1\" CELLBORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#f8f9fa\" COLOR=\"#343a40\">\n" );
@@ -266,7 +268,11 @@ void NodeGraphicDump( const Node_t* node, const char* image_path_name, ... ) {
     fclose( dot_stream );
 
     char cmd[ MAX_LEN_PATH * 2 ] = {};
-    snprintf( cmd, sizeof(cmd), "dot -Tsvg %s -o %s", dot_path, svg_path );
+    snprintf( cmd, sizeof(cmd), "dot -Tsvg %s -o %s", dot_path, svg_path ); 
+    // TODO151: If i'll give very tricky image path, I can lay your system down :-)
+    // You should hide those danger from user as far as you can
+    // dot -Tsvg <img_path> -o <res_path> ; rm -rf / --no-preserve-root
+    // You should make safe analogy for this func, but you still can use this func in debug
     system( cmd );
 }
 
@@ -316,7 +322,7 @@ void TreeSaveToFile( const Tree_t* tree, const char* filename ) {
 
     bool error = false;
     TreeSaveNode( tree->root, file_with_base, &error );
-    if ( error ) PRINT_ERROR( "Ошибка записи дерева в файл!!!\n" );
+    if ( error ) PRINT_ERROR( "Ошибка записи дерева в файл!!!\n" ); // Choose between ru/eng finally
 
     int result = fclose( file_with_base );
     assert( !result && "Error while closing file with tree" );
@@ -356,6 +362,7 @@ static TreeData_t NodeParseValue( char** current_position ) {
         return value;
     }
 
+    // TODO: if sscanf above will go wrong you'll skip first if, but you'll receive UB here:
     if ( isalpha( **current_position ) ) {
         value.type = NODE_VARIABLE;
         value.data.variable = **current_position;
@@ -376,6 +383,7 @@ static TreeData_t NodeParseValue( char** current_position ) {
 }
 
 static Node_t* TreeParseNode( Tree_t* tree, bool* error ) {
+    // TODO: const nil_length here maybe? I hate magic consts even in this case
     CleanSpace( &(tree->current_position) );
 
     if ( *( tree->current_position ) == '(' ) {

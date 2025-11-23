@@ -1,4 +1,6 @@
 *.json
 diff
+dump
+base.txt
 diff-debug
 /.cache

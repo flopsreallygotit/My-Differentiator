@@ -5,7 +5,7 @@
 #include "Expression.h"
 #include "DebugUtils.h"
 
-const size_t MAX_SIZE = 256;
+const size_t MAX_SIZE = 256; // TODO // FIXME: Why do you limit variable number? Make dynamic array
 
 struct Variable_t {
     char name;
@@ -14,7 +14,7 @@ struct Variable_t {
 
 
 static double SearchVariable( char name, Variable_t variables[ MAX_SIZE ], 
-                                            size_t* number_of_variables ) {
+                                            size_t* number_of_variables ) { // TODO SearchVariableValue
     my_assert( variables, "Null pointer on `inited_variables" );
 
     for ( size_t idx = 0; idx < *number_of_variables; idx++ ) {
@@ -54,7 +54,7 @@ static double EvaluateNode( Node_t* node, Variable_t variables[ MAX_SIZE ], size
                 case '+': return L + R;
                 case '-': return L - R;
                 case '*': return L * R;
-                case '/': return L / R;
+                case '/': return L / R; // TODO: R = 0 case?
 
                 default:
                     PRINT_ERROR( "Ошибка: неизвестная операция '%c'\n", op );

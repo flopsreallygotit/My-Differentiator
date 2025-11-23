@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <stdio.h> // TODO: All nested include directives should be protected by header guard too. Move it down
+/* It works fine just because system headers have it's own guards https://godbolt.org/z/z6TveGY5f */
 
 #ifndef TREE_H
 #define TREE_H
@@ -34,7 +35,7 @@ enum OperationType {
     INIT_OPERATIONS( INIT_OP_ENUM )
 };
 
-struct NodeValue {
+struct NodeValue { // That's cool decision!
     enum NodeType type;
 
     union {
@@ -58,7 +59,17 @@ struct Node_t {
 struct Tree_t {
     Node_t* root;
 
-    char* buffer;
+    /* TODO:
+    I think that it's bad idea to store buffer with initial expression
+    in Tree struct. You should make Differentiator struct, that will contain:
+    Tree_t *tree;
+    ExprInfo_t *expr_info;
+    e.t.c
+    because tree shouldn't provide any functional that implements any interaction with
+    initial expression, but differentiator should.
+    */
+
+    char* buffer; 
     char* current_position;
     off_t buffer_size;
 
@@ -69,16 +80,16 @@ struct Tree_t {
         char* img_log_path;
     } logging;
 
-    size_t image_number;
+    size_t image_number; // TODO151: You can move it to Log_t struct and provide unique log artifact number, that will ease interaction with this part
 #endif
 };
 
-enum TreeStatus_t {
+enum TreeStatus_t { // TODO: Remove if you don't use it
     SUCCESS = 0,
     FAIL    = 1
 };
 
-enum DirectionType {
+enum DirectionType { // TODO: Remove if you don't use it
     RIGHT = 0,
     LEFT  = 1
 };
